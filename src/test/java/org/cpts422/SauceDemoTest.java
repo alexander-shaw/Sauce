@@ -87,6 +87,13 @@ public class SauceDemoTest {
         loginAs("standard_user", "secret_sauce");
         // Verify the login succeeded by navigating to the products (inventory) page.
         assertThat(page).hasURL("https://www.saucedemo.com/inventory.html");
+
+        // Locate the Backpack product card and read its displayed price as currency.
+        Locator backpackCard = productCardByExactName("Sauce Labs Backpack");
+        String backpackPriceText = backpackCard
+                .locator("xpath=.//*[contains(@class,'inventory_item_price')]")
+                .innerText();
+        BigDecimal backpackPrice = parseDisplayedDollars(backpackPriceText);
     }
 
     @AfterAll
