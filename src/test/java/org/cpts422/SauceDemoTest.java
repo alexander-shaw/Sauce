@@ -263,6 +263,10 @@ public class SauceDemoTest {
 
         // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
         assertThat(page.locator("span.shopping_cart_badge")).hasText("1");
+
+        // Assert the removed item is truly absent (not just hidden).
+        assertThat(page.getByText("Sauce Labs Backpack")).hasCount(0);
+        assertThat(page.getByText("Sauce Labs Bike Light")).isVisible();
     }
 
     @AfterAll
