@@ -157,6 +157,19 @@ public class SauceDemoTest {
         String displayedTaxText = page.locator("div.summary_tax_amount").innerText();
         BigDecimal displayedTax = parseDisplayedDollars(displayedTaxText);
         assertEquals(expectedTax, displayedTax);
+
+        // Calculate expected final total from the expected subtotal and rounded tax.
+        BigDecimal expectedFinalTotal = expectedItemSubtotal
+                .add(expectedTax)
+                .setScale(2, RoundingMode.HALF_UP);
+
+        // Read the displayed final total and compare numeric values.
+        String displayedTotalText = page.locator("div.summary_total_amount").innerText();
+        BigDecimal displayedFinalTotal = parseDisplayedDollars(displayedTotalText);
+        assertEquals(expectedFinalTotal, displayedFinalTotal);
+
+        // Finish the purchase. Confirmation and empty-cart assertions are intentionally deferred.
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Finish")).click();
     }
 
     @AfterAll
