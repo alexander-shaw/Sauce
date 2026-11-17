@@ -204,7 +204,11 @@ public class SauceDemoTest {
     }
 
     @ParameterizedTest
-    @CsvSource({})
+    @CsvSource({
+        "locked_out_user, secret_sauce, \"Epic sadface: Sorry, this user has been locked out.\"",
+        "standard_user, wrong_password, Epic sadface: Username and password do not match any user in this service",
+        "'', secret_sauce, Epic sadface: Username is required"
+    })
     @DisplayName("T2: Rejected logins show expected error messages")
     void t2RejectedLoginsShowExpectedErrorMessages(String username, String password, String expectedErrorMessage) {
         // TODO: Add CSV rows and implement login + assertions for each rejected login scenario.
