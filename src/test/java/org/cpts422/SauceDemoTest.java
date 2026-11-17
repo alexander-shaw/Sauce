@@ -360,6 +360,12 @@ public class SauceDemoTest {
     void t6LogoutAndProtectProductsPage() {
         loginAs("standard_user", "secret_sauce");
         assertThat(page).hasURL("https://www.saucedemo.com/inventory.html");
+
+        // Open the sidebar menu (user-facing button name).
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Open Menu")).click();
+
+        // Auto-wait verification that the logout control is now visible.
+        assertThat(page.getByText("Logout", new Page.GetByTextOptions().setExact(true))).isVisible();
     }
 
     @AfterAll
