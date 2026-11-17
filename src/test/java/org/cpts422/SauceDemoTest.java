@@ -226,6 +226,12 @@ public class SauceDemoTest {
         assertThat(expectedErrorLocator).hasText(expectedErrorMessage);
     }
 
+    @Test
+    @DisplayName("T3: Removing an item from the cart")
+    void t3RemovingOneItemFromCart() {
+        loginAs("standard_user", "secret_sauce");
+    }
+
     @AfterAll
     static void closeBrowser() {
         try {
