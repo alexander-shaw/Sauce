@@ -61,7 +61,7 @@ public class SauceDemoTest {
         // (The card wrapper itself has no accessible role/label, so we need DOM traversal here.)
         return page
                 .getByText(productName, new Page.GetByTextOptions().setExact(true))
-                .locator("xpath=ancestor::div[contains(@class,'inventory_item')]");
+                .locator("xpath=ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' inventory_item ')]");
     }
 
     private static BigDecimal parseDisplayedDollars(String displayedAmount) {
@@ -121,7 +121,7 @@ public class SauceDemoTest {
     }
 
     private void clickAddToCart(Locator productCard) {
-        productCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+        productCard.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Add to cart").setExact(true)).click();
     }
 
     private void openCart() {
@@ -156,14 +156,15 @@ public class SauceDemoTest {
         clickAddToCart(backpackCard);
         clickAddToCart(bikeLightCard);
 
-        assertThat(page.getByText("2", new Page.GetByTextOptions().setExact(true))).hasCount(1);
+        // CSS fallback: the cart badge has no role, label, placeholder, or unique text.
+        assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
 
         openCart();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
 
-        // Verify both items are listed on the cart page (order-independent).
-        assertThat(page.getByText("Sauce Labs Backpack")).isVisible();
-        assertThat(page.getByText("Sauce Labs Bike Light")).isVisible();
+        // Verify both items are listed on the cart page (exact names, order-independent).
+        assertThat(page.getByText("Sauce Labs Backpack", new Page.GetByTextOptions().setExact(true))).isVisible();
+        assertThat(page.getByText("Sauce Labs Bike Light", new Page.GetByTextOptions().setExact(true))).isVisible();
 
         // Proceed to checkout (step one) and verify we reached the information page.
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Checkout")).click();
@@ -206,7 +207,7 @@ public class SauceDemoTest {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Finish")).click();
 
         // Verify the order confirmation heading is visible.
-        assertThat(page.getByText("THANK YOU FOR YOUR ORDER")).isVisible();
+        assertThat(page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Thank you for your order!"))).isVisible();
 
         // Verify the cart icon remains available but the cart badge is absent (empty cart).
         // CSS fallback: the cart icon link has no reliable accessible name for user-facing role-based locators.
