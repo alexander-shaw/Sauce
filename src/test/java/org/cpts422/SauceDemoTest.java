@@ -292,6 +292,11 @@ public class SauceDemoTest {
         page.locator("a.shopping_cart_link").click();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
         assertThat(page.getByText("Sauce Labs Backpack")).isVisible();
+
+        // Proceed to checkout (step one) and verify we reached the information page.
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Checkout")).click();
+        assertThat(page).hasURL("https://www.saucedemo.com/checkout-step-one.html");
+        assertThat(page.getByText("Checkout: Your Information")).isVisible();
     }
 
     @AfterAll
