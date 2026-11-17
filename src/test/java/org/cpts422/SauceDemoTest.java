@@ -355,6 +355,13 @@ public class SauceDemoTest {
         }
     }
 
+    @Test
+    @DisplayName("T6: Logging out")
+    void t6LogoutAndProtectProductsPage() {
+        loginAs("standard_user", "secret_sauce");
+        assertThat(page).hasURL("https://www.saucedemo.com/inventory.html");
+    }
+
     @AfterAll
     static void closeBrowser() {
         try {
