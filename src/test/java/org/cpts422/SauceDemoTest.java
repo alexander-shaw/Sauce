@@ -82,6 +82,30 @@ public class SauceDemoTest {
         return new BigDecimal(numeric).setScale(2, RoundingMode.HALF_UP);
     }
 
+    private static BigDecimal parseLabeledDollars(String displayedText, String label) {
+        if (displayedText == null) {
+            throw new IllegalArgumentException("displayedText must not be null");
+        }
+        if (label == null) {
+            throw new IllegalArgumentException("label must not be null");
+        }
+
+        // Extract the single numeric token that follows the given label (e.g., "Tax: $3.20").
+        Pattern amountPattern = Pattern.compile(
+                Pattern.quote(label) + "\\s*\\$?(-?\\d+(?:\\.\\d+)?)"
+        );
+        Matcher matcher = amountPattern.matcher(displayedText);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("No numeric amount found for label '" + label + "' in: " + displayedText);
+        }
+        String numeric = matcher.group(1);
+        if (matcher.find()) {
+            throw new IllegalArgumentException("Malformed labeled amount (multiple matches) for label '" + label + "' in: " + displayedText);
+        }
+
+        return new BigDecimal(numeric).setScale(2, RoundingMode.HALF_UP);
+    }
+
     private void fillCheckoutInformation(String firstName, String lastName, String postalCode) {
         // Use user-facing labels so locators match the real form fields and are reusable in T4.
         page.getByLabel("First Name").fill(firstName);
@@ -143,9 +167,11 @@ public class SauceDemoTest {
         // Calculate expected item subtotal from the product prices shown on the inventory page.
         BigDecimal expectedItemSubtotal = backpackPrice.add(bikeLightPrice).setScale(2, RoundingMode.HALF_UP);
 
-        // Read the displayed "Item total" from the checkout overview and compare numeric values.
-        String displayedItemTotalText = page.locator("div.summary_subtotal_amount").innerText();
-        BigDecimal displayedItemSubtotal = parseDisplayedDollars(displayedItemTotalText);
+        // Read the checkout overview totals from a single text block and parse labeled amounts from it.
+        Locator itemTotalLabel = page.getByText("Item total:");
+        String checkoutOverviewText = itemTotalLabel.locator("xpath=ancestor::*[contains(., '$')][1]").innerText();
+
+        BigDecimal displayedItemSubtotal = parseLabeledDollars(checkoutOverviewText, "Item total:");
         assertEquals(expectedItemSubtotal, displayedItemSubtotal);
 
         // Calculate expected tax as 8% of the item subtotal, rounded to currency scale.
@@ -153,9 +179,7 @@ public class SauceDemoTest {
                 .multiply(new BigDecimal("0.08"))
                 .setScale(2, RoundingMode.HALF_UP);
 
-        // Read the displayed tax and compare numeric values.
-        String displayedTaxText = page.locator("div.summary_tax_amount").innerText();
-        BigDecimal displayedTax = parseDisplayedDollars(displayedTaxText);
+        BigDecimal displayedTax = parseLabeledDollars(checkoutOverviewText, "Tax:");
         assertEquals(expectedTax, displayedTax);
 
         // Calculate expected final total from the expected subtotal and rounded tax.
@@ -163,9 +187,7 @@ public class SauceDemoTest {
                 .add(expectedTax)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        // Read the displayed final total and compare numeric values.
-        String displayedTotalText = page.locator("div.summary_total_amount").innerText();
-        BigDecimal displayedFinalTotal = parseDisplayedDollars(displayedTotalText);
+        BigDecimal displayedFinalTotal = parseLabeledDollars(checkoutOverviewText, "Total:");
         assertEquals(expectedFinalTotal, displayedFinalTotal);
 
         // Finish the purchase. Confirmation and empty-cart assertions are intentionally deferred.
