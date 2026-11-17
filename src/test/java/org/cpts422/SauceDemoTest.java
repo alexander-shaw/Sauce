@@ -369,6 +369,11 @@ public class SauceDemoTest {
 
         // Click logout to end the authenticated session.
         page.getByText("Logout", new Page.GetByTextOptions().setExact(true)).click();
+
+        // Verify logout returned us to the login page.
+        assertThat(page).hasURL("https://www.saucedemo.com/");
+        assertThat(page.getByLabel("Username")).isVisible();
+        assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Login"))).isVisible();
     }
 
     @AfterAll
