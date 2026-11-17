@@ -300,6 +300,9 @@ public class SauceDemoTest {
 
         // Fill checkout information using the parameterized values (including empty strings for required-field negatives).
         fillCheckoutInformation(firstName, lastName, postalCode);
+
+        // Exercise checkout-step-one validation for whichever single field is empty in this CSV row.
+        clickContinue();
     }
 
     @AfterAll
