@@ -101,6 +101,10 @@ public class SauceDemoTest {
                 .locator("xpath=.//*[contains(@class,'inventory_item_price')]")
                 .innerText();
         BigDecimal bikeLightPrice = parseDisplayedDollars(bikeLightPriceText);
+
+        // Add each item to the cart, scoped to its own product card (no navigation yet).
+        backpackCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+        bikeLightCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
     }
 
     @AfterAll
