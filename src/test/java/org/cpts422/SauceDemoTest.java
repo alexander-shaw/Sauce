@@ -120,6 +120,15 @@ public class SauceDemoTest {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Continue")).click();
     }
 
+    private void clickAddToCart(Locator productCard) {
+        productCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+    }
+
+    private void openCart() {
+        // CSS fallback: the cart icon link has no reliable accessible name for user-facing role-based locators.
+        page.locator("a.shopping_cart_link").click();
+    }
+
     @Test
     @DisplayName("T1: Successful purchase of two items")
     void t1SuccessfulPurchaseOfTwoItems() {
@@ -142,14 +151,13 @@ public class SauceDemoTest {
         BigDecimal bikeLightPrice = parseDisplayedDollars(bikeLightPriceText);
 
         // Add each item to the cart, scoped to its own product card (no navigation yet).
-        backpackCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
-        bikeLightCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+        clickAddToCart(backpackCard);
+        clickAddToCart(bikeLightCard);
 
         // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
         assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
 
-        // CSS fallback: the cart icon link has no reliable accessible name for getByRole.
-        page.locator("a.shopping_cart_link").click();
+        openCart();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
 
         // Verify both items are listed on the cart page (order-independent).
@@ -234,16 +242,15 @@ public class SauceDemoTest {
 
         // Add each item to the cart, scoped to its own product card.
         Locator backpackCard = productCardByExactName("Sauce Labs Backpack");
-        backpackCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+        clickAddToCart(backpackCard);
 
         Locator bikeLightCard = productCardByExactName("Sauce Labs Bike Light");
-        bikeLightCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+        clickAddToCart(bikeLightCard);
 
         // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
         assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
 
-        // CSS fallback: open the cart using the cart icon link (established in T1).
-        page.locator("a.shopping_cart_link").click();
+        openCart();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
 
         // Verify both selected items are listed on the cart page (order-independent).
@@ -287,10 +294,9 @@ public class SauceDemoTest {
 
         // Add one item to the cart (use the existing product-card locator strategy).
         Locator backpackCard = productCardByExactName("Sauce Labs Backpack");
-        backpackCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+        clickAddToCart(backpackCard);
 
-        // CSS fallback: open the cart using the cart icon link (established in T1/T3).
-        page.locator("a.shopping_cart_link").click();
+        openCart();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
         assertThat(page.getByText("Sauce Labs Backpack")).isVisible();
 
