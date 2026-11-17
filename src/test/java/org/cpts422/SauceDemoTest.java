@@ -326,6 +326,9 @@ public class SauceDemoTest {
         // Select the user-visible "Price (low to high)" option from the sort dropdown.
         Locator sortDropdown = page.getByRole(AriaRole.COMBOBOX);
         sortDropdown.selectOption(new SelectOption().setLabel("Price (low to high)"));
+
+        // Assert the ascending sort option is selected by its underlying <option value>.
+        assertThat(sortDropdown).hasValue("lohi");
     }
 
     @AfterAll
