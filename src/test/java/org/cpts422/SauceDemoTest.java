@@ -3,6 +3,7 @@ package org.cpts422;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -45,6 +46,14 @@ public class SauceDemoTest {
         page.getByLabel("Username").fill(username);
         page.getByLabel("Password").fill(password);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Login")).click();
+    }
+
+    private Locator productCardByExactName(String productName) {
+        // Anchor on the exact user-visible product name, then walk up to the product-card container.
+        // (The card wrapper itself has no accessible role/label, so we need DOM traversal here.)
+        return page
+                .getByText(productName, new Page.GetByTextOptions().setExact(true))
+                .locator("xpath=ancestor::div[contains(@class,'inventory_item')]");
     }
 
     @Test
