@@ -303,6 +303,9 @@ public class SauceDemoTest {
 
         // Exercise checkout-step-one validation for whichever single field is empty in this CSV row.
         clickContinue();
+
+        // The missing-field submission should not advance to step two.
+        assertThat(page).hasURL("https://www.saucedemo.com/checkout-step-one.html");
     }
 
     @AfterAll
