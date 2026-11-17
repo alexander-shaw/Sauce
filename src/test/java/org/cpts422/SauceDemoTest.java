@@ -329,6 +329,13 @@ public class SauceDemoTest {
 
         // Assert the ascending sort option is selected by its underlying <option value>.
         assertThat(sortDropdown).hasValue("lohi");
+
+        // Read every displayed product price in DOM order and convert to currency BigDecimal values.
+        Locator priceLabels = page.getByText(Pattern.compile("^\\$\\d+\\.\\d{2}$"));
+        var displayedPrices = priceLabels.allInnerTexts()
+                .stream()
+                .map(SauceDemoTest::parseDisplayedDollars)
+                .toList();
     }
 
     @AfterAll
