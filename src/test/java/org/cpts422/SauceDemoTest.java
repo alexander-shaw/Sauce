@@ -81,6 +81,17 @@ public class SauceDemoTest {
         return new BigDecimal(numeric).setScale(2, RoundingMode.HALF_UP);
     }
 
+    private void fillCheckoutInformation(String firstName, String lastName, String postalCode) {
+        // Use user-facing labels so locators match the real form fields and are reusable in T4.
+        page.getByLabel("First Name").fill(firstName);
+        page.getByLabel("Last Name").fill(lastName);
+        page.getByLabel("Zip/Postal Code").fill(postalCode);
+    }
+
+    private void clickContinue() {
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Continue")).click();
+    }
+
     @Test
     @DisplayName("T1: Successful purchase of two items")
     void t1SuccessfulPurchaseOfTwoItems() {
@@ -121,6 +132,12 @@ public class SauceDemoTest {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Checkout")).click();
         assertThat(page).hasURL("https://www.saucedemo.com/checkout-step-one.html");
         assertThat(page.getByText("Checkout: Your Information")).isVisible();
+
+        // Fill checkout step one with valid data and continue.
+        fillCheckoutInformation("John", "Doe", "12345");
+        clickContinue();
+        assertThat(page).hasURL("https://www.saucedemo.com/checkout-step-two.html");
+        assertThat(page.getByText("Checkout: Overview")).isVisible();
     }
 
     @AfterAll
