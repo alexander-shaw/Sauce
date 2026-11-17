@@ -112,6 +112,10 @@ public class SauceDemoTest {
         // CSS fallback: the cart icon link has no reliable accessible name for getByRole.
         page.locator("a.shopping_cart_link").click();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
+
+        // Verify both items are listed on the cart page (order-independent).
+        assertThat(page.getByText("Sauce Labs Backpack")).isVisible();
+        assertThat(page.getByText("Sauce Labs Bike Light")).isVisible();
     }
 
     @AfterAll
