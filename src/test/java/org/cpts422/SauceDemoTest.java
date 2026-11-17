@@ -254,7 +254,7 @@ public class SauceDemoTest {
                         "Sauce Labs Backpack",
                         new Page.GetByTextOptions().setExact(true)
                 )
-                .locator("xpath=ancestor::*[.//button[normalize-space()='Remove'] and not(ancestor::*[.//button[normalize-space()='Remove']])]");
+                .locator("xpath=ancestor::*[.//button[normalize-space()='Remove'] and count(.//button[normalize-space()='Remove'])=1]");
         backpackCartItem.getByRole(
                         AriaRole.BUTTON,
                         new Locator.GetByRoleOptions().setName("Remove")
