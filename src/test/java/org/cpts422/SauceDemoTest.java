@@ -147,6 +147,16 @@ public class SauceDemoTest {
         String displayedItemTotalText = page.locator("div.summary_subtotal_amount").innerText();
         BigDecimal displayedItemSubtotal = parseDisplayedDollars(displayedItemTotalText);
         assertEquals(expectedItemSubtotal, displayedItemSubtotal);
+
+        // Calculate expected tax as 8% of the item subtotal, rounded to currency scale.
+        BigDecimal expectedTax = expectedItemSubtotal
+                .multiply(new BigDecimal("0.08"))
+                .setScale(2, RoundingMode.HALF_UP);
+
+        // Read the displayed tax and compare numeric values.
+        String displayedTaxText = page.locator("div.summary_tax_amount").innerText();
+        BigDecimal displayedTax = parseDisplayedDollars(displayedTaxText);
+        assertEquals(expectedTax, displayedTax);
     }
 
     @AfterAll
