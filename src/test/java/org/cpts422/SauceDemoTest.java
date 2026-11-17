@@ -105,6 +105,9 @@ public class SauceDemoTest {
         // Add each item to the cart, scoped to its own product card (no navigation yet).
         backpackCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
         bikeLightCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+
+        // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
+        assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
     }
 
     @AfterAll
