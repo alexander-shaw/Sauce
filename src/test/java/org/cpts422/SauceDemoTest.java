@@ -5,6 +5,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -50,6 +51,8 @@ public class SauceDemoTest {
     @DisplayName("T1: Successful purchase of two items")
     void t1SuccessfulPurchaseOfTwoItems() {
         loginAs("standard_user", "secret_sauce");
+        // Verify the login succeeded by navigating to the products (inventory) page.
+        assertThat(page).hasURL("https://www.saucedemo.com/inventory.html");
     }
 
     @AfterAll
