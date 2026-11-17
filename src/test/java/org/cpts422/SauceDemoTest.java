@@ -366,6 +366,9 @@ public class SauceDemoTest {
 
         // Auto-wait verification that the logout control is now visible.
         assertThat(page.getByText("Logout", new Page.GetByTextOptions().setExact(true))).isVisible();
+
+        // Click logout to end the authenticated session.
+        page.getByText("Logout", new Page.GetByTextOptions().setExact(true)).click();
     }
 
     @AfterAll
