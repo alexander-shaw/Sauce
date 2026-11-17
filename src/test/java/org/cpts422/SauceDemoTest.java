@@ -342,6 +342,17 @@ public class SauceDemoTest {
                 displayedPrices.size() > 1,
                 "Expected multiple displayed product prices to validate ascending sorting"
         );
+
+        // Verify non-decreasing order across every adjacent pair (allowing equal prices).
+        for (int i = 0; i < displayedPrices.size() - 1; i++) {
+            BigDecimal earlier = displayedPrices.get(i);
+            BigDecimal later = displayedPrices.get(i + 1);
+            org.junit.jupiter.api.Assertions.assertTrue(
+                    earlier.compareTo(later) <= 0,
+                    "Ascending price sort failed at adjacent indices " + i + " and " + (i + 1)
+                            + ": expected " + earlier + " <= " + later
+            );
+        }
     }
 
     @AfterAll
