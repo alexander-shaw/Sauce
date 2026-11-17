@@ -211,6 +211,12 @@ public class SauceDemoTest {
         assertThat(page.locator("a.shopping_cart_link")).isVisible();
         // CSS fallback: the cart badge is not reliably targetable via user-facing locators, so locate it directly.
         assertThat(page.locator("span.shopping_cart_badge")).hasCount(0);
+
+        // Strengthen empty-cart verification: the cart page should not contain the previously purchased items.
+        openCart();
+        assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
+        assertThat(page.getByText("Sauce Labs Backpack")).hasCount(0);
+        assertThat(page.getByText("Sauce Labs Bike Light")).hasCount(0);
     }
 
     @ParameterizedTest
@@ -347,6 +353,16 @@ public class SauceDemoTest {
         org.junit.jupiter.api.Assertions.assertTrue(
                 displayedPrices.size() > 1,
                 "Expected multiple displayed product prices to validate ascending sorting"
+        );
+
+        // Prevent partial-collection passes: ensure we extracted one price per product card.
+        int addToCartButtonCount = page
+                .getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add to cart"))
+                .count();
+        org.junit.jupiter.api.Assertions.assertEquals(
+                addToCartButtonCount,
+                displayedPrices.size(),
+                "Expected to collect a displayed price for every product shown on the page"
         );
 
         // Verify non-decreasing order across every adjacent pair (allowing equal prices).
