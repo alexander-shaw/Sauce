@@ -230,6 +230,16 @@ public class SauceDemoTest {
     @DisplayName("T3: Removing an item from the cart")
     void t3RemovingOneItemFromCart() {
         loginAs("standard_user", "secret_sauce");
+
+        // Add each item to the cart, scoped to its own product card.
+        Locator backpackCard = productCardByExactName("Sauce Labs Backpack");
+        backpackCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+
+        Locator bikeLightCard = productCardByExactName("Sauce Labs Bike Light");
+        bikeLightCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+
+        // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
+        assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
     }
 
     @AfterAll
