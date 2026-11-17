@@ -108,6 +108,10 @@ public class SauceDemoTest {
 
         // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
         assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
+
+        // CSS fallback: the cart icon link has no reliable accessible name for getByRole.
+        page.locator("a.shopping_cart_link").click();
+        assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
     }
 
     @AfterAll
