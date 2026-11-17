@@ -257,7 +257,8 @@ public class SauceDemoTest {
         Locator bikeLightCard = productCardByExactName("Sauce Labs Bike Light");
         clickAddToCart(bikeLightCard);
 
-        assertThat(page.getByText("2", new Page.GetByTextOptions().setExact(true))).hasCount(1);
+        // CSS fallback: the cart badge has no role, label, placeholder, or unique text.
+        assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
 
         openCart();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
@@ -271,10 +272,11 @@ public class SauceDemoTest {
                         "Sauce Labs Backpack",
                         new Page.GetByTextOptions().setExact(true)
                 )
-                .locator("xpath=ancestor::*[.//button[normalize-space()='Remove'] and count(.//button[normalize-space()='Remove'])=1]");
+                .locator("xpath=ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' cart_item ')]");
+        // XPath fallback: the cart entry wrapper has no role or label; it scopes Remove to the Backpack only.
         backpackCartItem.getByRole(
                         AriaRole.BUTTON,
-                        new Locator.GetByRoleOptions().setName("Remove")
+                        new Locator.GetByRoleOptions().setName("Remove").setExact(true)
                 )
                 .click();
 
