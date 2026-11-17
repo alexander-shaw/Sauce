@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.SelectOption;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
@@ -321,6 +322,10 @@ public class SauceDemoTest {
     void t5SortProductsByPriceLowToHigh() {
         loginAs("standard_user", "secret_sauce");
         assertThat(page).hasURL("https://www.saucedemo.com/inventory.html");
+
+        // Select the user-visible "Price (low to high)" option from the sort dropdown.
+        Locator sortDropdown = page.getByRole(AriaRole.COMBOBOX);
+        sortDropdown.selectOption(new SelectOption().setLabel("Price (low to high)"));
     }
 
     @AfterAll
