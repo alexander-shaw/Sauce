@@ -248,6 +248,18 @@ public class SauceDemoTest {
         // Verify both selected items are listed on the cart page (order-independent).
         assertThat(page.getByText("Sauce Labs Backpack")).isVisible();
         assertThat(page.getByText("Sauce Labs Bike Light")).isVisible();
+
+        // Remove only Sauce Labs Backpack (scoped to its specific cart item).
+        Locator backpackCartItem = page.getByText(
+                        "Sauce Labs Backpack",
+                        new Page.GetByTextOptions().setExact(true)
+                )
+                .locator("xpath=ancestor::*[.//button[normalize-space()='Remove'] and not(ancestor::*[.//button[normalize-space()='Remove']])]");
+        backpackCartItem.getByRole(
+                        AriaRole.BUTTON,
+                        new Locator.GetByRoleOptions().setName("Remove")
+                )
+                .click();
     }
 
     @AfterAll
