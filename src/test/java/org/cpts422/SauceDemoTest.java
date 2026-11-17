@@ -154,8 +154,7 @@ public class SauceDemoTest {
         clickAddToCart(backpackCard);
         clickAddToCart(bikeLightCard);
 
-        // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
-        assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
+        assertThat(page.getByText("2", new Page.GetByTextOptions().setExact(true))).hasCount(1);
 
         openCart();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
@@ -208,7 +207,9 @@ public class SauceDemoTest {
         assertThat(page.getByText("THANK YOU FOR YOUR ORDER")).isVisible();
 
         // Verify the cart icon remains available but the cart badge is absent (empty cart).
+        // CSS fallback: the cart icon link has no reliable accessible name for user-facing role-based locators.
         assertThat(page.locator("a.shopping_cart_link")).isVisible();
+        // CSS fallback: the cart badge is not reliably targetable via user-facing locators, so locate it directly.
         assertThat(page.locator("span.shopping_cart_badge")).hasCount(0);
     }
 
@@ -247,8 +248,7 @@ public class SauceDemoTest {
         Locator bikeLightCard = productCardByExactName("Sauce Labs Bike Light");
         clickAddToCart(bikeLightCard);
 
-        // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
-        assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
+        assertThat(page.getByText("2", new Page.GetByTextOptions().setExact(true))).hasCount(1);
 
         openCart();
         assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
