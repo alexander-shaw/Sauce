@@ -138,17 +138,15 @@ public class SauceDemoTest {
 
         // Locate the Backpack product card and read its displayed price as currency.
         Locator backpackCard = productCardByExactName("Sauce Labs Backpack");
-        // XPath fallback: the price text varies and has no role, label, or placeholder to target.
         String backpackPriceText = backpackCard
-                .locator("xpath=.//*[contains(@class,'inventory_item_price')]")
+                .getByText(Pattern.compile("^\\$\\d+\\.\\d{2}$"))
                 .innerText();
         BigDecimal backpackPrice = parseDisplayedDollars(backpackPriceText);
 
         // Locate the Bike Light product card and read its displayed price as currency.
         Locator bikeLightCard = productCardByExactName("Sauce Labs Bike Light");
-        // XPath fallback: the price text varies and has no role, label, or placeholder to target.
         String bikeLightPriceText = bikeLightCard
-                .locator("xpath=.//*[contains(@class,'inventory_item_price')]")
+                .getByText(Pattern.compile("^\\$\\d+\\.\\d{2}$"))
                 .innerText();
         BigDecimal bikeLightPrice = parseDisplayedDollars(bikeLightPriceText);
 
@@ -180,11 +178,9 @@ public class SauceDemoTest {
         // Calculate expected item subtotal from the product prices shown on the inventory page.
         BigDecimal expectedItemSubtotal = backpackPrice.add(bikeLightPrice).setScale(2, RoundingMode.HALF_UP);
 
-        // Read the checkout overview totals from a single text block and parse labeled amounts from it.
-        Locator itemTotalLabel = page.getByText("Item total:");
-        String checkoutOverviewText = itemTotalLabel.locator("xpath=ancestor::*[contains(., '$')][1]").innerText();
-
-        BigDecimal displayedItemSubtotal = parseLabeledDollars(checkoutOverviewText, "Item total:");
+        // Read each overview amount from its own visible label line.
+        BigDecimal displayedItemSubtotal = parseLabeledDollars(
+                page.getByText(Pattern.compile("^Item total:")).innerText(), "Item total:");
         assertEquals(expectedItemSubtotal, displayedItemSubtotal);
 
         // Calculate expected tax as 8% of the item subtotal, rounded to currency scale.
@@ -192,7 +188,8 @@ public class SauceDemoTest {
                 .multiply(new BigDecimal("0.08"))
                 .setScale(2, RoundingMode.HALF_UP);
 
-        BigDecimal displayedTax = parseLabeledDollars(checkoutOverviewText, "Tax:");
+        BigDecimal displayedTax = parseLabeledDollars(
+                page.getByText(Pattern.compile("^Tax:")).innerText(), "Tax:");
         assertEquals(expectedTax, displayedTax);
 
         // Calculate expected final total from the expected subtotal and rounded tax.
@@ -200,7 +197,8 @@ public class SauceDemoTest {
                 .add(expectedTax)
                 .setScale(2, RoundingMode.HALF_UP);
 
-        BigDecimal displayedFinalTotal = parseLabeledDollars(checkoutOverviewText, "Total:");
+        BigDecimal displayedFinalTotal = parseLabeledDollars(
+                page.getByText(Pattern.compile("^Total:")).innerText(), "Total:");
         assertEquals(expectedFinalTotal, displayedFinalTotal);
 
         // Finish the purchase and verify confirmation + empty-cart UI.
