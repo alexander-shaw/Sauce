@@ -216,6 +216,14 @@ public class SauceDemoTest {
 
         // The error message alone isn't sufficient; assert the app didn't navigate away from the login page.
         assertThat(page).hasURL("https://www.saucedemo.com/");
+
+        // The login error is shown as user-visible text, so use an exact getByText locator.
+        Locator expectedErrorLocator = page.getByText(
+                expectedErrorMessage,
+                new Page.GetByTextOptions().setExact(true)
+        );
+        assertThat(expectedErrorLocator).isVisible();
+        assertThat(expectedErrorLocator).hasText(expectedErrorMessage);
     }
 
     @AfterAll
