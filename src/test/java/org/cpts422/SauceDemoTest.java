@@ -336,6 +336,12 @@ public class SauceDemoTest {
                 .stream()
                 .map(SauceDemoTest::parseDisplayedDollars)
                 .toList();
+
+        // Prevent vacuous passes: sorting correctness needs at least two values to compare.
+        org.junit.jupiter.api.Assertions.assertTrue(
+                displayedPrices.size() > 1,
+                "Expected multiple displayed product prices to validate ascending sorting"
+        );
     }
 
     @AfterAll
