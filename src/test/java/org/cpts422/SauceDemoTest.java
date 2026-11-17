@@ -94,6 +94,13 @@ public class SauceDemoTest {
                 .locator("xpath=.//*[contains(@class,'inventory_item_price')]")
                 .innerText();
         BigDecimal backpackPrice = parseDisplayedDollars(backpackPriceText);
+
+        // Locate the Bike Light product card and read its displayed price as currency.
+        Locator bikeLightCard = productCardByExactName("Sauce Labs Bike Light");
+        String bikeLightPriceText = bikeLightCard
+                .locator("xpath=.//*[contains(@class,'inventory_item_price')]")
+                .innerText();
+        BigDecimal bikeLightPrice = parseDisplayedDollars(bikeLightPriceText);
     }
 
     @AfterAll
