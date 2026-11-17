@@ -240,6 +240,14 @@ public class SauceDemoTest {
 
         // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
         assertThat(page.locator("span.shopping_cart_badge")).hasText("2");
+
+        // CSS fallback: open the cart using the cart icon link (established in T1).
+        page.locator("a.shopping_cart_link").click();
+        assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
+
+        // Verify both selected items are listed on the cart page (order-independent).
+        assertThat(page.getByText("Sauce Labs Backpack")).isVisible();
+        assertThat(page.getByText("Sauce Labs Bike Light")).isVisible();
     }
 
     @AfterAll
