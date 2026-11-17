@@ -213,6 +213,9 @@ public class SauceDemoTest {
     void t2RejectedLoginsShowExpectedErrorMessages(String username, String password, String expectedErrorMessage) {
         // loginAs only fills + clicks the Login button; it does not assert success.
         loginAs(username, password);
+
+        // The error message alone isn't sufficient; assert the app didn't navigate away from the login page.
+        assertThat(page).hasURL("https://www.saucedemo.com/");
     }
 
     @AfterAll
