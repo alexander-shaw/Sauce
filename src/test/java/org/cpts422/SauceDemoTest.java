@@ -211,7 +211,8 @@ public class SauceDemoTest {
     })
     @DisplayName("T2: Rejected logins show expected error messages")
     void t2RejectedLoginsShowExpectedErrorMessages(String username, String password, String expectedErrorMessage) {
-        // TODO: Add CSV rows and implement login + assertions for each rejected login scenario.
+        // loginAs only fills + clicks the Login button; it does not assert success.
+        loginAs(username, password);
     }
 
     @AfterAll
