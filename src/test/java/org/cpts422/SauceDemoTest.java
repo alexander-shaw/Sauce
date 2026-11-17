@@ -269,6 +269,22 @@ public class SauceDemoTest {
         assertThat(page.getByText("Sauce Labs Bike Light")).isVisible();
     }
 
+    @ParameterizedTest
+    @CsvSource({
+        "'', Doe, 12345, 'Error: First Name is required'",
+        "John, '', 12345, 'Error: Last Name is required'",
+        "John, Doe, '', 'Error: Postal Code is required'"
+    })
+    @DisplayName("T4: Checkout information is required")
+    void t4CheckoutInformationIsRequiredShowsMissingFieldErrors(
+            String firstName,
+            String lastName,
+            String postalCode,
+            String expectedErrorMessage
+    ) {
+        // TODO: implement checkout-step-one fill + Continue + error assertions.
+    }
+
     @AfterAll
     static void closeBrowser() {
         try {
