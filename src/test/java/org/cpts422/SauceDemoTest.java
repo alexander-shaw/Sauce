@@ -116,6 +116,11 @@ public class SauceDemoTest {
         // Verify both items are listed on the cart page (order-independent).
         assertThat(page.getByText("Sauce Labs Backpack")).isVisible();
         assertThat(page.getByText("Sauce Labs Bike Light")).isVisible();
+
+        // Proceed to checkout (step one) and verify we reached the information page.
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Checkout")).click();
+        assertThat(page).hasURL("https://www.saucedemo.com/checkout-step-one.html");
+        assertThat(page.getByText("Checkout: Your Information")).isVisible();
     }
 
     @AfterAll
