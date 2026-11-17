@@ -13,6 +13,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -353,7 +354,7 @@ public class SauceDemoTest {
                 .toList();
 
         // Prevent vacuous passes: sorting correctness needs at least two values to compare.
-        org.junit.jupiter.api.Assertions.assertTrue(
+        assertTrue(
                 displayedPrices.size() > 1,
                 "Expected multiple displayed product prices to validate ascending sorting"
         );
@@ -362,7 +363,7 @@ public class SauceDemoTest {
         int addToCartButtonCount = page
                 .getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add to cart"))
                 .count();
-        org.junit.jupiter.api.Assertions.assertEquals(
+        assertEquals(
                 addToCartButtonCount,
                 displayedPrices.size(),
                 "Expected to collect a displayed price for every product shown on the page"
@@ -372,7 +373,7 @@ public class SauceDemoTest {
         for (int i = 0; i < displayedPrices.size() - 1; i++) {
             BigDecimal earlier = displayedPrices.get(i);
             BigDecimal later = displayedPrices.get(i + 1);
-            org.junit.jupiter.api.Assertions.assertTrue(
+            assertTrue(
                     earlier.compareTo(later) <= 0,
                     "Ascending price sort failed at adjacent indices " + i + " and " + (i + 1)
                             + ": expected " + earlier + " <= " + later
