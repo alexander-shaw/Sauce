@@ -306,6 +306,14 @@ public class SauceDemoTest {
 
         // The missing-field submission should not advance to step two.
         assertThat(page).hasURL("https://www.saucedemo.com/checkout-step-one.html");
+
+        // The validation error is shown as user-visible text, so use an exact getByText locator.
+        Locator expectedErrorLocator = page.getByText(
+                expectedErrorMessage,
+                new Page.GetByTextOptions().setExact(true)
+        );
+        assertThat(expectedErrorLocator).isVisible();
+        assertThat(expectedErrorLocator).hasText(expectedErrorMessage);
     }
 
     @AfterAll
