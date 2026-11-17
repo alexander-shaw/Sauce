@@ -282,7 +282,16 @@ public class SauceDemoTest {
             String postalCode,
             String expectedErrorMessage
     ) {
-        // TODO: implement checkout-step-one fill + Continue + error assertions.
+        loginAs("standard_user", "secret_sauce");
+
+        // Add one item to the cart (use the existing product-card locator strategy).
+        Locator backpackCard = productCardByExactName("Sauce Labs Backpack");
+        backpackCard.locator("xpath=.//button[normalize-space()='Add to cart']").click();
+
+        // CSS fallback: open the cart using the cart icon link (established in T1/T3).
+        page.locator("a.shopping_cart_link").click();
+        assertThat(page).hasURL("https://www.saucedemo.com/cart.html");
+        assertThat(page.getByText("Sauce Labs Backpack")).isVisible();
     }
 
     @AfterAll
