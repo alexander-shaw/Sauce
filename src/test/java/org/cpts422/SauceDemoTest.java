@@ -1,5 +1,9 @@
 package org.cpts422;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.options.AriaRole;
@@ -54,6 +58,27 @@ public class SauceDemoTest {
         return page
                 .getByText(productName, new Page.GetByTextOptions().setExact(true))
                 .locator("xpath=ancestor::div[contains(@class,'inventory_item')]");
+    }
+
+    private static BigDecimal parseDisplayedDollars(String displayedAmount) {
+        if (displayedAmount == null) {
+            throw new IllegalArgumentException("displayedAmount must not be null");
+        }
+
+        // Accepts inputs like "$29.99" and "Item total: $29.99".
+        // Extract exactly one numeric token; reject malformed inputs (no token or multiple tokens).
+        Pattern amountPattern = Pattern.compile("-?\\d+(?:\\.\\d+)?");
+        Matcher matcher = amountPattern.matcher(displayedAmount);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("No numeric amount found in: " + displayedAmount);
+        }
+        String numeric = matcher.group();
+        if (matcher.find()) {
+            throw new IllegalArgumentException("Malformed amount (multiple numeric tokens) in: " + displayedAmount);
+        }
+
+        // Convert to BigDecimal and force currency scale (2 decimals) with deterministic rounding.
+        return new BigDecimal(numeric).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Test
