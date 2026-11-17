@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HW3: SauceDemo System Testing</title>
+<style>
+:root { color-scheme: light dark; }
+body { font-family: system-ui, sans-serif; line-height: 1.65; max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 3rem; overflow-wrap: break-word; }
+h1, h2, h3 { line-height: 1.3; }
+h1 { font-size: 2rem; }
+h2 { margin-top: 2rem; border-bottom: 1px solid #8886; padding-bottom: .4rem; }
+h3 { margin-top: 1.6rem; }
+code { font-family: ui-monospace, monospace; background: #8882; padding: .12em .3em; border-radius: 3px; }
+li { margin: .45rem 0; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #8888; padding: .65rem; vertical-align: top; }
+th { background: #8882; text-align: left; }
+th:last-child, td:last-child { text-align: right; }
+@media print { body { max-width: none; padding: 0; } h2, h3 { break-after: avoid; } tr { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<main>
+<h1>HW3: SauceDemo System Testing</h1>
+<h2>Overview</h2>
+<p>In this homework you write system tests for <strong>SauceDemo</strong> (<a href="https://www.saucedemo.com/">SauceDemo demo shop</a>), an online shop built for practicing test automation, using Playwright for Java and JUnit 5. Each test follows one use case thread through the browser, the way a customer would: logging in, choosing products, managing the cart, and checking out. <strong>Money moves in this shop, so your tests must check the amounts, not just the clicks.</strong></p>
+<p>The shop offers several test accounts, all with the password <code>secret_sauce</code>, and its login page lists them. This homework uses <code>standard_user</code> for normal shopping and <code>locked_out_user</code> for a blocked account.</p>
+<p><strong>DO NOT ONE-SHOT THIS HOMEWORK.</strong></p>
+<p>You may use AI throughout, but never generate the test class, or a whole test, from a single prompt. Build the tests thread by thread with AI as a partner. Along with your test file, you submit your <strong>AI logs</strong> and a short <strong>video</strong> explaining one of your tests (see Submission).</p>
+<h2>Setup</h2>
+<p>Use the same setup as the in-class exercise: IntelliJ, Java 17, Maven, Playwright 1.55.0 and JUnit Jupiter 5.10.2. You may reuse the <code>PlaywrightTest</code> project from class or create a new Maven project with the same two dependencies. Write all tests in one class, <code>SauceDemoTest.java</code>, in <code>src/test/java/org/cpts422</code>.</p>
+<p>Follow the in-class structure: <code>Playwright</code> and <code>Browser</code> are created once for the class, and every test gets its own <code>BrowserContext</code> and <code>Page</code>. Start each test from the login page.</p>
+<h2>Use Case Threads to Automate</h2>
+<p>Write one test per thread below, except where a thread says to use a parameterized test. Start each <code>@DisplayName</code> with the thread ID, for example <code>@DisplayName(&quot;T1: Customer buys two items and sees the correct total&quot;)</code>.</p>
+<p>Work through the threads one at a time and run each test before you start the next. <strong>Do not one-shot the threads with AI</strong>, not even one thread at a time from a single prompt you did not follow up on.</p>
+<h3>T1: Successful purchase of two items</h3>
+<p>Log in as <code>standard_user</code>. On the products page, read the prices shown for <strong>Sauce Labs Backpack</strong> and <strong>Sauce Labs Bike Light</strong>, then add both to the cart. Assert that the cart icon reports 2 items and that the cart page lists both items. Check out with any first name, last name and postal code. On the overview page:</p>
+<ul>
+<li>assert that the item total equals the sum of the two prices your test read from the products page;</li>
+<li>assert that the tax equals 8% of the item total, rounded to the nearest cent;</li>
+<li>assert that the total equals the item total plus the tax.</li>
+</ul>
+<p><strong>Compute the expected amounts in the test from the prices the page shows; do not type the totals in as constants.</strong> Finish the order and assert that the confirmation heading is visible, the cart icon reports an empty cart, and the cart badge is gone.</p>
+<h3>T2: Rejected logins</h3>
+<p>Write <strong>one parameterized test</strong> (<code>@ParameterizedTest</code> with <code>@CsvSource</code>) covering at least these rows: <code>locked_out_user</code> with the correct password, <code>standard_user</code> with a wrong password, and an empty username. For each row, assert that the page stays on the login page and that the error message shown matches the case.</p>
+<p><strong>Hint:</strong> in <code>@CsvSource</code>, a field left blank arrives in your test as <code>null</code>, not as an empty string, and Playwright's <code>fill(null)</code> throws an exception. Write the empty username as two single quotes, <code>''</code>, which gives an empty string. The same applies to the missing fields in T4.</p>
+<h3>T3: Removing an item from the cart</h3>
+<p>Log in, add two items, open the cart, and remove one. Assert that the cart icon now reports 1 item, the removed item is no longer listed, and the other item still is.</p>
+<h3>T4: Checkout information is required</h3>
+<p>Write <strong>one parameterized test</strong> with a row for each missing field on the checkout information page: first name, last name, and postal code. For each row, fill in the other two fields, press <strong>Continue</strong>, and assert that the page does not move on and that the error names the missing field.</p>
+<h3>T5: Sorting products by price</h3>
+<p>Log in and sort the products by price, low to high, and assert that the sort option is now selected. Read all prices on the page and assert that they appear in non-decreasing order. <strong>Asserting only the first or the last product is not enough.</strong></p>
+<h3>T6: Logging out</h3>
+<p>Log in, log out through the menu, and assert that the login page is shown. Then navigate directly to the products page URL and assert that the shop refuses access and shows an error on the login page.</p>
+<h2>Requirements</h2>
+<ul>
+<li><strong>Locators: the way a user sees the page.</strong> Use <code>getByRole</code>, <code>getByLabel</code>, <code>getByPlaceholder</code> or <code>getByText</code> first. Use a CSS locator (<code>page.locator(...)</code>) only for an element that has no usable role, label, placeholder or text, such as the cart badge, and add a one-line comment saying why.</li>
+<li><strong>Playwright assertions for the state of the page.</strong> Use Playwright's <code>assertThat</code> (<code>com.microsoft.playwright.assertions.PlaywrightAssertions</code>) to check what the page shows: visibility, text, URL and element state. Values your test reads from the page and calculates with, such as prices and totals, may be compared with JUnit assertions.</li>
+<li><strong>No waiting by hand.</strong> No <code>Thread.sleep</code> and no fixed pauses; rely on Playwright's auto-waiting, and raise the timeout of a single assertion if a page is slow.</li>
+<li><strong>Every test stands alone.</strong> Each test starts from the login page in its own <code>BrowserContext</code> and passes when run alone or in any order.</li>
+<li><strong>Readable tests.</strong> Every test has a <code>@DisplayName</code> that starts with its thread ID and a descriptive camelCase method name. Repeated steps, such as logging in, go in a helper method.</li>
+<li><strong>Tests that can fail.</strong> Every test ends with at least one assertion about the result of the thread, not only the actions that lead to it.</li>
+<li><strong>Built step by step, not one-shot.</strong> Your AI logs must show the tests being built over several exchanges, thread by thread, with you reading, running and correcting what the AI produced.</li>
+</ul>
+<h2>Using AI and Codegen</h2>
+<p>You may use AI for the whole homework, from understanding Playwright to writing and debugging the tests. <strong>DO NOT ONE-SHOT IT:</strong> never ask an AI to produce the test class, or a whole test, from a single prompt. Work with it thread by thread: ask, read what it gives you, run it against the site, fix what is wrong, and only then move on to the next thread. Keep your <strong>AI logs</strong>, the full conversations with every AI tool you use for this homework; they are part of your submission.</p>
+<p>You may also use Playwright's codegen recorder to capture the clicks of a thread. Recorded code is a starting draft, not a finished test: replace any CSS locators that have a role, label, placeholder or text alternative, remove steps the thread does not need, and add the assertions yourself, since a recorder captures what you did, not what should happen.</p>
+<h2>Submission</h2>
+<p>Submit three things:</p>
+<ol>
+<li><code>SauceDemoTest.java</code>, as a single file (do not zip it and do not submit the whole project).</li>
+<li><strong>Your AI logs:</strong> the full conversations with every AI tool you used for this homework, as a PDF, Word or Markdown file.</li>
+<li><strong>A video (MP4), 5 minutes at most:</strong> pick one of your tests. With the test open in IntelliJ and SauceDemo open in Chrome, open DevTools (right-click the page and choose <strong>Inspect</strong>, or press Cmd+Option+I on a Mac or Ctrl+Shift+I on Windows) and go to the <strong>Elements</strong> panel. Walk through the test line by line. For each locator, <strong>show the element it finds in the Elements panel</strong> and explain why you chose that locator. For each action, say what it does on the page, and for each assertion, say what it proves about the thread. End by running the test.</li>
+</ol>
+<p><strong>One more time: DO NOT ONE-SHOT THIS HOMEWORK.</strong> The AI logs show how you built your tests, and the video shows that you understand them.</p>
+<p><strong>Before submitting, run the whole class once from IntelliJ and make sure every test passes.</strong></p>
+<h2>Points</h2>
+<table>
+<thead>
+<tr>
+  <th>HW3 points breakdown (50 points)</th>
+  <th style="text-align:right">Points</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>T1: Successful purchase of two items</td>
+  <td style="text-align:right">8</td>
+</tr>
+<tr>
+  <td>T2: Rejected logins (parameterized)</td>
+  <td style="text-align:right">5</td>
+</tr>
+<tr>
+  <td>T3: Removing an item from the cart</td>
+  <td style="text-align:right">4</td>
+</tr>
+<tr>
+  <td>T4: Checkout information is required (parameterized)</td>
+  <td style="text-align:right">5</td>
+</tr>
+<tr>
+  <td>T5: Sorting products by price</td>
+  <td style="text-align:right">4</td>
+</tr>
+<tr>
+  <td>T6: Logging out</td>
+  <td style="text-align:right">4</td>
+</tr>
+<tr>
+  <td>Requirements across all tests (locators, assertions, no sleeps, independent tests, naming and helpers)</td>
+  <td style="text-align:right">5</td>
+</tr>
+<tr>
+  <td>AI logs</td>
+  <td style="text-align:right">5</td>
+</tr>
+<tr>
+  <td><strong>Video</strong></td>
+  <td style="text-align:right"><strong>10</strong></td>
+</tr>
+<tr>
+  <td>Total</td>
+  <td style="text-align:right"><strong>50</strong></td>
+</tr>
+</tbody>
+</table>
+
+</main>
+</body>
+</html>
