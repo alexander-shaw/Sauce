@@ -260,6 +260,9 @@ public class SauceDemoTest {
                         new Locator.GetByRoleOptions().setName("Remove")
                 )
                 .click();
+
+        // CSS fallback: the cart badge has no stable accessible role/label, so locate it directly.
+        assertThat(page.locator("span.shopping_cart_badge")).hasText("1");
     }
 
     @AfterAll
