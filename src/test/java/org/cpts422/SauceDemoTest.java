@@ -316,6 +316,13 @@ public class SauceDemoTest {
         assertThat(expectedErrorLocator).hasText(expectedErrorMessage);
     }
 
+    @Test
+    @DisplayName("T5: Sorting products by ascending price")
+    void t5SortProductsByPriceLowToHigh() {
+        loginAs("standard_user", "secret_sauce");
+        assertThat(page).hasURL("https://www.saucedemo.com/inventory.html");
+    }
+
     @AfterAll
     static void closeBrowser() {
         try {
