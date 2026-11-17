@@ -190,8 +190,15 @@ public class SauceDemoTest {
         BigDecimal displayedFinalTotal = parseLabeledDollars(checkoutOverviewText, "Total:");
         assertEquals(expectedFinalTotal, displayedFinalTotal);
 
-        // Finish the purchase. Confirmation and empty-cart assertions are intentionally deferred.
+        // Finish the purchase and verify confirmation + empty-cart UI.
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Finish")).click();
+
+        // Verify the order confirmation heading is visible.
+        assertThat(page.getByText("THANK YOU FOR YOUR ORDER")).isVisible();
+
+        // Verify the cart icon remains available but the cart badge is absent (empty cart).
+        assertThat(page.locator("a.shopping_cart_link")).isVisible();
+        assertThat(page.locator("span.shopping_cart_badge")).hasCount(0);
     }
 
     @AfterAll
