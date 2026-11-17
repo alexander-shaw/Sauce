@@ -18,6 +18,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class SauceDemoTest {
     private static Playwright playwright;
@@ -199,6 +201,13 @@ public class SauceDemoTest {
         // Verify the cart icon remains available but the cart badge is absent (empty cart).
         assertThat(page.locator("a.shopping_cart_link")).isVisible();
         assertThat(page.locator("span.shopping_cart_badge")).hasCount(0);
+    }
+
+    @ParameterizedTest
+    @CsvSource({})
+    @DisplayName("T2: Rejected logins show expected error messages")
+    void t2RejectedLoginsShowExpectedErrorMessages(String username, String password, String expectedErrorMessage) {
+        // TODO: Add CSV rows and implement login + assertions for each rejected login scenario.
     }
 
     @AfterAll
