@@ -37,3 +37,11 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Submission video (submitted separately, not committed) ###
+*.mp4
+
+### Playwright artifacts ###
+test-results/
+playwright-report/
+*.trace.zip
