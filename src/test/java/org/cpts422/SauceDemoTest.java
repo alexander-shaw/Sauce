@@ -11,6 +11,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -138,6 +139,14 @@ public class SauceDemoTest {
         clickContinue();
         assertThat(page).hasURL("https://www.saucedemo.com/checkout-step-two.html");
         assertThat(page.getByText("Checkout: Overview")).isVisible();
+
+        // Calculate expected item subtotal from the product prices shown on the inventory page.
+        BigDecimal expectedItemSubtotal = backpackPrice.add(bikeLightPrice).setScale(2, RoundingMode.HALF_UP);
+
+        // Read the displayed "Item total" from the checkout overview and compare numeric values.
+        String displayedItemTotalText = page.locator("div.summary_subtotal_amount").innerText();
+        BigDecimal displayedItemSubtotal = parseDisplayedDollars(displayedItemTotalText);
+        assertEquals(expectedItemSubtotal, displayedItemSubtotal);
     }
 
     @AfterAll
