@@ -138,6 +138,7 @@ public class SauceDemoTest {
 
         // Locate the Backpack product card and read its displayed price as currency.
         Locator backpackCard = productCardByExactName("Sauce Labs Backpack");
+        // XPath fallback: the price text varies and has no role, label, or placeholder to target.
         String backpackPriceText = backpackCard
                 .locator("xpath=.//*[contains(@class,'inventory_item_price')]")
                 .innerText();
@@ -145,6 +146,7 @@ public class SauceDemoTest {
 
         // Locate the Bike Light product card and read its displayed price as currency.
         Locator bikeLightCard = productCardByExactName("Sauce Labs Bike Light");
+        // XPath fallback: the price text varies and has no role, label, or placeholder to target.
         String bikeLightPriceText = bikeLightCard
                 .locator("xpath=.//*[contains(@class,'inventory_item_price')]")
                 .innerText();
