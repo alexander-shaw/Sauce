@@ -378,6 +378,15 @@ public class SauceDemoTest {
         // Navigate directly to the protected products page in the *same* session and verify it is blocked.
         page.navigate("https://www.saucedemo.com/inventory.html");
         assertThat(page).hasURL("https://www.saucedemo.com/");
+
+        String expectedUnauthorizedAccessError =
+                "Epic sadface: You can only access '/inventory.html' when you are logged in.";
+        Locator unauthorizedAccessError = page.getByText(
+                expectedUnauthorizedAccessError,
+                new Page.GetByTextOptions().setExact(true)
+        );
+        assertThat(unauthorizedAccessError).isVisible();
+        assertThat(unauthorizedAccessError).hasText(expectedUnauthorizedAccessError);
     }
 
     @AfterAll
