@@ -374,6 +374,10 @@ public class SauceDemoTest {
         assertThat(page).hasURL("https://www.saucedemo.com/");
         assertThat(page.getByLabel("Username")).isVisible();
         assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Login"))).isVisible();
+
+        // Navigate directly to the protected products page in the *same* session and verify it is blocked.
+        page.navigate("https://www.saucedemo.com/inventory.html");
+        assertThat(page).hasURL("https://www.saucedemo.com/");
     }
 
     @AfterAll
