@@ -297,6 +297,9 @@ public class SauceDemoTest {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Checkout")).click();
         assertThat(page).hasURL("https://www.saucedemo.com/checkout-step-one.html");
         assertThat(page.getByText("Checkout: Your Information")).isVisible();
+
+        // Fill checkout information using the parameterized values (including empty strings for required-field negatives).
+        fillCheckoutInformation(firstName, lastName, postalCode);
     }
 
     @AfterAll
